@@ -16,6 +16,7 @@ export const conversion = (room: Room): Room => {
   Object.keys(newRoom.members).forEach((memberId) => {
     const collectNumber = checkCollecting(newRoom.members[memberId].hands);
     if (!collectNumber) return;
+    newRoom.members[memberId].point = newRoom.members[memberId].point + 1;
     newRoom.members[memberId].hands = newRoom.members[memberId].hands.filter(
       (card) => card !== collectNumber,
     );

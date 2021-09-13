@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import Link from 'next/link';
+import { Top } from 'src/components/Top';
 
 const TopPage: NextPage = () => {
   return (
@@ -8,12 +8,7 @@ const TopPage: NextPage = () => {
         Authors
         <span>Lie</span>
       </h1>
-      <Link href="/entrance">
-        <a>Entrance</a>
-      </Link>
-      <Link href="/aaaaaaaaaa">
-        <a>Room</a>
-      </Link>
+      <Top />
     </div>
   );
 };

@@ -32,15 +32,18 @@ const shuffle = (array: any[]) => {
   return newArray;
 };
 
-export const setGame = (room: Room): Room => {
+export const setGame = (input: { room: Room; max: number }): Room => {
+  const { room, max } = input;
   const newRoom = { ...room };
-  const _deck = createCards(9);
-  const deck = shuffle(_deck);
-  const members = shuffle(Object.keys(newRoom.members));
+  const _deck = createCards(max);
+  const deck = shuffle(_deck) as number[];
+  const members = shuffle(Object.keys(newRoom.members)) as string[];
   members.forEach((memberId, index) => {
     newRoom.members[memberId].hands = deck.splice(0, 4);
+    newRoom.members[memberId].point = 0;
     newRoom.members[memberId].next = members[(index + 1) % members.length];
   });
-  newRoom.currentTurn = members[0];
+  newRoom.current = { memberId: members[0], phase: 'draw' };
+  newRoom.deck = deck;
   return newRoom;
 };

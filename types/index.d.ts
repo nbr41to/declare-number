@@ -22,7 +22,10 @@ export type Room = {
     [userId: string]: Member;
   };
   deck: number[]; // 山札
-  currentTurn: string; // 現在のターンのユーザーID
+  current: {
+    memberId: string; // 現在のターンのユーザーID
+    phase: 'draw' | 'declare'; // 現在のフェーズ
+  }; // 現在のターンのユーザーID
   logs: string[]; // ログ
   // stamps: []; // スタンプ機能（実装予定）
 };

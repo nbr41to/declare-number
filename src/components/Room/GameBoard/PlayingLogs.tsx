@@ -9,9 +9,9 @@ type PlayingLogsProps = {
 const PlayingLogs: VFC<PlayingLogsProps> = ({ className, logs }) => {
   return (
     <StyledPlayingLogs className={`${className} box`}>
-      {logs.map((log, i) => (
-        <p key={i}>{log}</p>
-      ))}
+      <p>{logs[logs.length - 1] || ' - '}</p>
+      <p>{logs[logs.length - 2] || ' - '}</p>
+      <p>{logs[logs.length - 3] || ' - '}</p>
     </StyledPlayingLogs>
   );
 };

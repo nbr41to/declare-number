@@ -1,3 +1,4 @@
+import { conversion } from 'src/libs/conversion';
 import { Room } from 'types/index';
 
 export const declareNumber = (input: {
@@ -7,20 +8,25 @@ export const declareNumber = (input: {
   declareId: string;
 }): Room => {
   const { room, number, targetId, declareId } = input;
-  if (!room.members[targetId].hands.includes(number)) return room;
   const newRoom: Room = { ...room };
   const numOf = room.members[targetId].hands.filter(
     (hand) => hand === number,
   ).length;
-  newRoom.members[targetId].hands = room.members[targetId].hands.filter(
-    (hand) => hand !== number,
-  );
-  for (let i = 0; i < numOf; i++) {
-    newRoom.members[declareId].hands.push(number);
+  if (room.members[targetId].hands.includes(number)) {
+    /* 宣言対象者が数字を持っていた場合 */
+    newRoom.members[targetId].hands = room.members[targetId].hands.filter(
+      (hand) => hand !== number,
+    );
+    for (let i = 0; i < numOf; i++) {
+      newRoom.members[declareId].hands.push(number);
+    }
   }
   newRoom.logs.push(
-    `${number}: ${room.members[targetId].name}▶${room.members[declareId].name} ${numOf}枚`,
+    `${number}！ ... ${room.members[targetId].name} ▶ ${room.members[declareId].name} __ ${numOf}枚`,
   );
-  newRoom.currentTurn = room.members[declareId].next;
-  return newRoom;
+
+  /* ターン移行処理 */
+  newRoom.current.memberId = room.members[declareId].next;
+  newRoom.current.phase = 'draw';
+  return conversion(newRoom);
 };

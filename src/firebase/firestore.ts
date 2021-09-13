@@ -1,15 +1,20 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { Room } from 'types';
+import { stringify } from 'querystring';
+import { Room, User } from 'types';
 
 import { db } from './config';
+
+const roomRef = collection(db, 'rooms');
+const roomDoc = (roomId: string) => doc(db, 'rooms', roomId);
 
 /* 新しい部屋の作成 */
 export const createRoom = async (input: {
@@ -36,7 +41,7 @@ export const createRoom = async (input: {
       },
     },
     deck: [],
-    currentTurn: '',
+    current: { memberId: '', phase: 'draw' },
     logs: [],
   };
 
@@ -44,19 +49,19 @@ export const createRoom = async (input: {
   return newRoomRef.id;
 };
 
-/* 部屋のメンバー情報を追加 */
-export const addMember = async (input: {
-  roomId: string;
+/* 部屋に入る*/
+export const joinRoom = async (input: {
   id: string;
   name: string;
   code: string;
-}): Promise<void> => {
+}): Promise<string> => {
   const { id, name, code } = input;
   const roomRef = query(
     collection(db, 'rooms'),
     where('inviteCode', '==', code),
   );
-  const roomId = (await getDocs(roomRef)[0].id) as string;
+  const snapshot = await getDocs(roomRef);
+  const roomId = snapshot.docs[0].id;
   await updateDoc(doc(collection(db, 'rooms'), roomId), {
     [`members.${id}`]: {
       name,
@@ -66,14 +71,41 @@ export const addMember = async (input: {
       next: '',
     },
   });
+  return roomId;
 };
 
 /* ReadyCheckをtrueに書き換え */
-export const onReady = async () => {};
+export const onReady = async (input: {
+  memberId: string;
+  roomId: string;
+}): Promise<void> => {
+  const { memberId, roomId } = input;
+  await updateDoc(doc(collection(db, 'rooms'), roomId), {
+    [`members.${memberId}.isReady`]: true,
+  });
+};
 
 /* room情報を書き換え */
 export const writeRoom = async (room: Room): Promise<void> => {
-  await setDoc(doc(collection(db, 'rooms'), room.id), room);
+  await setDoc(doc(db, 'rooms', room.id), room);
+};
+
+/* user情報の取得 */
+export const getUser = async (input: {
+  id: string;
+  roomId: string;
+}): Promise<User> => {
+  const { id, roomId } = input;
+  if (!id || !roomId) return;
+  const roomDoc = await getDoc(doc(db, 'rooms', roomId));
+  const room = roomDoc.data() as Room;
+  console.log(room);
+  const user = {
+    id,
+    name: room.members[id].name,
+    current: { roomId },
+  };
+  return user;
 };
 
 /* 初期ゲームデータの書き込み */

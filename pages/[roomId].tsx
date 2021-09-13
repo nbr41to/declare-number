@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { GameBoard } from 'src/components/Room/GameBoard';
+import { Room } from 'src/components/Room';
 
 const RoomPage: NextPage = () => {
   return (
@@ -8,7 +8,7 @@ const RoomPage: NextPage = () => {
         Authors
         <span>Lie</span>
       </h1>
-      <GameBoard />
+      <Room />
     </div>
   );
 };
