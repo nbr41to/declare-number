@@ -18,7 +18,7 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react', '@typescript-eslint','simple-import-sort'],
   extends: ['next', 'eslint:recommended', 'plugin:@typescript-eslint/eslint-recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react/recommended', 'plugin:@next/next/recommended', 'prettier'],
   rules: {
     '@next/next/no-page-custom-font': 'off',
@@ -33,8 +33,16 @@ module.exports = {
     "import/no-default-export": "warn",
     "import/no-extraneous-dependencies": "warn",
     "no-console": ["warn", { allow: ["warn", "error"] }],
-    "simple-import-sort/exports": "warn",
     "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
+    "import/exports-last": "warn",
     quotes: ['error', 'single'],
   },
+  overrides: [
+    {
+      files: ["pages/**"],
+      rules: { "import/no-default-export": "off" },
+    },
+  ],
 };
